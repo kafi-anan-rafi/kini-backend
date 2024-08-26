@@ -23,7 +23,7 @@ app.use("/products", productsRouter);
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
-  res.send("Hello Express!");
+  res.render("index");
 });
 
 app.all("/*", (req, res) => {
