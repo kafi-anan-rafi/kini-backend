@@ -2,12 +2,12 @@ const express = require("express");
 const app = express();
 
 require("dotenv").config();
-require("./config/mongoose.config");
+require("./config/mongooseConfig");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const ownersRouter = require("./routes/owners.route");
-const usersRouter = require("./routes/users.route");
-const productsRouter = require("./routes/products.route");
+const ownerRouter = require("./routes/ownerRoute");
+const userRouter = require("./routes/userRoute");
+const productRouter = require("./routes/productRoute");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -16,14 +16,14 @@ app.use(cookieParser());
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-app.use("/owners", ownersRouter);
-app.use("/users", usersRouter);
-app.use("/products", productsRouter);
+app.use("/api/owners", ownerRouter);
+app.use("/api/users", userRouter);
+app.use("/api/products", productRouter);
 
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
-  res.render("index");
+  res.status(200).json({ message: "Welcome to Baag!" });
 });
 
 app.all("/*", (req, res) => {
