@@ -8,4 +8,9 @@ const ownerRegistrationSchema = Joi.object({
   picture: Joi.string().uri().optional(),
 });
 
-module.exports = ownerRegistrationSchema;
+const ownerLoginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+});
+
+module.exports = { ownerRegistrationSchema, ownerLoginSchema };

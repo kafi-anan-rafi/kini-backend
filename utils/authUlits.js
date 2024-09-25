@@ -5,7 +5,6 @@ const SECRET = process.env.SECRET;
 
 // Function to hash a password
 const hashPassword = async (password) => {
-  console.log(password);
   try {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     return hashedPassword;
@@ -20,22 +19,29 @@ const comparePassword = async (password, hashedPassword) => {
     const isMatch = await bcrypt.compare(password, hashedPassword);
     return isMatch;
   } catch (error) {
-    throw new Error("Error comparing passwords");
+    throw new Error("Password comparison failed");
   }
 };
 
 const generateToken = (userInfo) => {
-  const payload = { _id: userInfo._id, role: userInfo.role };
-  const options = { expiresIn: "1h" };
-  return jwt.sign(payload, SECRET, options);
+  try {
+    const payload = { _id: userInfo._id, role: userInfo.role };
+    const options = { expiresIn: "1h" };
+    const token = jwt.sign(payload, SECRET, options);
+    return { valid: true, token };
+  } catch (err) {
+    console.error("Token generation error!", err.message);
+    return { valid: false, message: "Token generation failed" };
+  }
 };
 
-const verifyToken = async (token) => {
+const verifyToken = (token) => {
   try {
-    const decoded = await jwt.verify(token, SECRET);
-    return decoded;
+    const decoded = jwt.verify(token, SECRET);
+    return { valid: true, decoded };
   } catch (err) {
-    throw new Error("Token verification failed");
+    console.error("Token verification error:", err.message);
+    return { valid: false, message: "Token verification failed" };
   }
 };
 

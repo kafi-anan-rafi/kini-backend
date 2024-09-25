@@ -5,8 +5,8 @@ const productSchema = new Schema({
   name: { type: String, required: true },
   details: { type: String, required: true },
   price: { type: String, required: true },
-  quantity: { type: String, required: true },
-  pictures: [{ type: String, required: true }],
+  stock: { type: String, required: true },
+  pictures: String,
   ownerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "owner",
@@ -15,4 +15,4 @@ const productSchema = new Schema({
 
 const productModel = model("product", productSchema);
 
-exports = productModel;
+module.exports = productModel;

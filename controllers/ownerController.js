@@ -1,29 +1,47 @@
 const ownerModel = require("../models/ownerModel");
-const { hashPassword, generateToken } = require("../utils/authUlits");
-const ownerRegistrationSchema = require("../validations/ownerRegistration");
-const ownerLoginSchema = require("../validations/ownerLogin");
+const {
+  hashPassword,
+  generateToken,
+  comparePassword,
+} = require("../utils/authUlits");
+const {
+  ownerRegistrationSchema,
+  ownerLoginSchema,
+} = require("../validations/ownerSchema");
 
+// Login
 async function OwnerLogin(req, res) {
-  const { error, value } = ownerLoginSchema.validate(req.body);
+  const { error, value } = ownerLoginSchema.validate(req.body, {
+    abortEarly: false,
+  });
   if (error) {
-    return res.status(400).json({ message: error.details[0].message });
+    const allMessages = error.details.map((err) => err.message);
+    return res.status(400).json({ message: allMessages });
   }
   const owner = await ownerModel.findOne({ email: value.email });
   if (!owner) {
     return res.status(404).send({ message: "Owner not found" });
   }
-  const isMatch = await bcrypt.compare(password, owner.password);
+  const hashedPassword = await hashPassword(value.password);
+  const isMatch = comparePassword(value.password, hashedPassword);
   if (!isMatch) {
     return res.status(401).send("Invalid password");
   }
-  const token = generateToken(owner);
-  res.status(200).send({ message: "Owner logged in", token });
+  const { valid, token, message } = generateToken(owner);
+  if (!valid) {
+    return res.status(401).json({ message });
+  }
+  res.status(200).send({ message: "Login Successful", token });
 }
 
+// Registration
 async function OwnerRegister(req, res) {
-  const { error, value } = ownerRegistrationSchema.validate(req.body);
+  const { error, value } = ownerRegistrationSchema.validate(req.body, {
+    abortEarly: false,
+  });
   if (error) {
-    return res.status(400).json({ message: error.details[0].message });
+    const allMessages = error.details.map((err) => err.message);
+    return res.status(400).json({ message: allMessages });
   }
   const owner = await ownerModel.findOne({ email: value.email });
   if (owner) {
@@ -32,7 +50,10 @@ async function OwnerRegister(req, res) {
   const hashedPassword = await hashPassword(value.password);
   value.password = hashedPassword;
   const newOwner = await ownerModel.create(value);
-  const token = generateToken(newOwner);
+  const { valid, token, message } = generateToken(newOwner);
+  if (!valid) {
+    return res.status(401).json({ message });
+  }
   res.status(201).send({ message: "Registration succeful", token });
 }
 
