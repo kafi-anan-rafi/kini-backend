@@ -26,8 +26,16 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "Welcome to Baag!" });
 });
 
-app.all("/*", (req, res) => {
-  res.status(404).send("Resourse not found");
+app.all("/*", (req, res, next) => {
+  const err = new Error("Resource not found");
+  err.status = 404;
+  next(err);
+});
+
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({
+    message: err.message || "Internal Server Error!",
+  });
 });
 
 app.listen(PORT, () => {

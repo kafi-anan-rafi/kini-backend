@@ -4,8 +4,6 @@ const {
   addProductSchema,
   updateProductSchema,
 } = require("../validations/productSchema");
-const path = require("path");
-const fs = require("fs");
 const removeFiles = require("../utils/filesUtils");
 
 // Get All Product
@@ -69,13 +67,12 @@ async function AddProduct(req, res) {
 }
 
 // Update Product
-async function UpdateProduct(req, res) {
+async function UpdateProduct(req, res, next) {
   try {
     const productId = req.params.productId;
     const files = req.files;
-    console.log(files);
     const pictures = files.map((f) => f.filename);
-    const { name, details, price, stock, ownerId } = req.body;
+    const { name, details, price, stock } = req.body;
     const { error, value } = updateProductSchema.validate({
       name,
       details,
@@ -97,7 +94,7 @@ async function UpdateProduct(req, res) {
         .json({ message: "You are not authorized to update this product" });
     }
     // delete the existing files
-    removeFiles(product);
+    removeFiles(product, next);
 
     const updatedProduct = await productModel.findByIdAndUpdate(
       productId,
