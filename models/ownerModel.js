@@ -14,7 +14,7 @@ const ownerSchema = new Schema({
     },
   ],
   picture: String,
-  role: { type: String, default: "admin" },
+  role: { type: String, default: "owner" },
 });
 
 const ownerModel = model("owner", ownerSchema);

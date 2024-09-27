@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const checkAdmin = require("../middlewares/authMiddleware");
+const checkOwner = require("../middlewares/authMiddleware");
 const {
   AddProduct,
   GetProducts,
@@ -8,13 +8,14 @@ const {
   UpdateProduct,
   DeleteProduct,
 } = require("../controllers/productController");
+const upload = require("../config/multerConfig");
 
-router.use(checkAdmin);
+router.use(checkOwner);
 
 router.get("/", GetProducts);
 router.get("/:productId", GetProduct);
-router.post("/", AddProduct);
-router.patch("/:productId", UpdateProduct);
+router.post("/", upload.array("pictures", 5), AddProduct);
+router.patch("/:productId", upload.array("pictures", 5), UpdateProduct);
 router.delete("/:productId", DeleteProduct);
 
 module.exports = router;

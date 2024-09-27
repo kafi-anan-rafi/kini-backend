@@ -6,7 +6,7 @@ const productSchema = new Schema({
   details: { type: String, required: true },
   price: { type: String, required: true },
   stock: { type: String, required: true },
-  pictures: String,
+  pictures: [{ type: String, required: true }],
   ownerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "owner",

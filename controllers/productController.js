@@ -4,6 +4,9 @@ const {
   addProductSchema,
   updateProductSchema,
 } = require("../validations/productSchema");
+const path = require("path");
+const fs = require("fs");
+const removeFiles = require("../utils/filesUtils");
 
 // Get All Product
 async function GetProducts(req, res) {
@@ -39,10 +42,12 @@ async function GetProduct(req, res) {
 // Add Product
 async function AddProduct(req, res) {
   try {
+    const files = req.files;
+    const pictures = files.map((f) => f.filename);
     const { name, details, price, stock } = req.body;
     const ownerId = req.user._id;
     const { error, value } = addProductSchema.validate(
-      { name, details, price, stock, ownerId },
+      { name, details, price, stock, ownerId, pictures },
       { abortEarly: false }
     );
     if (error) {
@@ -57,16 +62,27 @@ async function AddProduct(req, res) {
       },
       { new: true }
     );
-    res.status(200).send(product);
+    res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 }
 
+// Update Product
 async function UpdateProduct(req, res) {
   try {
     const productId = req.params.productId;
-    const { error, value } = updateProductSchema.validate(req.body);
+    const files = req.files;
+    console.log(files);
+    const pictures = files.map((f) => f.filename);
+    const { name, details, price, stock, ownerId } = req.body;
+    const { error, value } = updateProductSchema.validate({
+      name,
+      details,
+      price,
+      stock,
+      pictures,
+    });
     if (error) {
       const allMessages = error.details.map((err) => err.message);
       return res.status(400).json({ message: allMessages });
@@ -75,6 +91,14 @@ async function UpdateProduct(req, res) {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
+    if (product.ownerId.toString() !== req.user._id) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to update this product" });
+    }
+    // delete the existing files
+    removeFiles(product);
+
     const updatedProduct = await productModel.findByIdAndUpdate(
       productId,
       value,
@@ -86,6 +110,7 @@ async function UpdateProduct(req, res) {
   }
 }
 
+// Delete Product
 async function DeleteProduct(req, res) {
   try {
     const productId = req.params.productId;

@@ -1,6 +1,6 @@
 const { verifyToken } = require("../utils/authUlits");
 
-async function checkAdmin(req, res, next) {
+async function checkOwner(req, res, next) {
   try {
     const authHeader = req.headers["authorization"];
     if (!authHeader) {
@@ -12,7 +12,7 @@ async function checkAdmin(req, res, next) {
       return res.status(401).json({ message });
     }
     req.user = { _id: decoded._id, role: decoded.role };
-    if (req.user && req.user.role === "admin") {
+    if (req.user && req.user.role === "owner") {
       next();
     } else {
       res.status(403).json({ message: "Access denied" });
@@ -22,4 +22,4 @@ async function checkAdmin(req, res, next) {
   }
 }
 
-module.exports = checkAdmin;
+module.exports = checkOwner;
