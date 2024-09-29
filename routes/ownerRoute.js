@@ -1,16 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { OwnerLogin, OwnerRegister } = require("../controllers/ownerController");
-const checkOwner = require("../middlewares/authMiddleware");
+const upload = require("../config/multerConfig");
 
-router.get("/", checkOwner, (req, res) => {
-  res.send("Hello owners!");
-});
-
-// Login
 router.post("/login", OwnerLogin);
-
-// Registration
-router.post("/register", OwnerRegister);
+router.post("/register", upload.single("picture"), OwnerRegister);
 
 module.exports = router;

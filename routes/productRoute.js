@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const checkOwner = require("../middlewares/authMiddleware");
+const { verifyOwner } = require("../middlewares/authMiddleware");
 const {
   AddProduct,
   GetProducts,
@@ -10,7 +10,7 @@ const {
 } = require("../controllers/productController");
 const upload = require("../config/multerConfig");
 
-router.use(checkOwner);
+router.use(verifyOwner);
 
 router.get("/", GetProducts);
 router.get("/:productId", GetProduct);

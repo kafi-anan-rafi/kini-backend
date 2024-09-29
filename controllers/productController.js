@@ -7,7 +7,7 @@ const {
 const removeFiles = require("../utils/filesUtils");
 
 // Get All Product
-async function GetProducts(req, res) {
+async function GetProducts(req, res, next) {
   try {
     const userId = req.user._id;
     const products = await productModel.find({ ownerId: userId });
@@ -16,12 +16,13 @@ async function GetProducts(req, res) {
     }
     res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    next(error);
+    next(error);
   }
 }
 
 // Get a single Product
-async function GetProduct(req, res) {
+async function GetProduct(req, res, next) {
   try {
     const productId = req.params.productId;
     const product = await productModel.findOne({
@@ -33,12 +34,12 @@ async function GetProduct(req, res) {
     }
     res.status(200).json(product);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    next(error);
   }
 }
 
 // Add Product
-async function AddProduct(req, res) {
+async function AddProduct(req, res, next) {
   try {
     const files = req.files;
     const pictures = files.map((f) => f.filename);
@@ -62,7 +63,7 @@ async function AddProduct(req, res) {
     );
     res.status(200).json(product);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    next(error);
   }
 }
 
@@ -103,12 +104,12 @@ async function UpdateProduct(req, res, next) {
     );
     res.status(201).json(updatedProduct);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    next(error);
   }
 }
 
 // Delete Product
-async function DeleteProduct(req, res) {
+async function DeleteProduct(req, res, next) {
   try {
     const productId = req.params.productId;
     const product = await productModel.findById(productId);
@@ -123,7 +124,7 @@ async function DeleteProduct(req, res) {
     await productModel.findByIdAndDelete(productId);
     res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    next(error);
   }
 }
 

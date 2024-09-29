@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const ownerRouter = require("./routes/ownerRoute");
 const userRouter = require("./routes/userRoute");
 const productRouter = require("./routes/productRoute");
+const orderRouter = require("./routes/orderRoute");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -19,6 +20,7 @@ app.set("view engine", "ejs");
 app.use("/api/owners", ownerRouter);
 app.use("/api/users", userRouter);
 app.use("/api/products", productRouter);
+app.use("/api/orders", orderRouter);
 
 const PORT = process.env.PORT || 3000;
 

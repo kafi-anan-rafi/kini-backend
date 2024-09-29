@@ -5,7 +5,7 @@ const ownerRegistrationSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
   address: Joi.string().required(),
-  picture: Joi.string().uri().optional(),
+  picture: Joi.string().optional(),
 });
 
 const ownerLoginSchema = Joi.object({
