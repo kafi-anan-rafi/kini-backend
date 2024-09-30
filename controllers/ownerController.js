@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const ownerModel = require("../models/ownerModel");
 const {
   hashPassword,
@@ -9,8 +11,7 @@ const {
   ownerLoginSchema,
 } = require("../validations/ownerSchema");
 
-// Login
-async function OwnerLogin(req, res, next) {
+async function Login(req, res, next) {
   try {
     const { error, value } = ownerLoginSchema.validate(req.body, {
       abortEarly: false,
@@ -57,8 +58,7 @@ async function OwnerLogin(req, res, next) {
   }
 }
 
-// Registration
-async function OwnerRegistration(req, res, next) {
+async function Registration(req, res, next) {
   try {
     const { filename: picture } = req.file;
     const { name, email, password, address } = req.body;
@@ -96,4 +96,26 @@ async function OwnerRegistration(req, res, next) {
   }
 }
 
-module.exports = { OwnerLogin, OwnerRegistration };
+async function ViewProfile(req, res, next) {
+  try {
+    const { _id: ownerId } = req.user;
+    const owner = await ownerModel.findById(ownerId).select("-password");
+    if (!owner) {
+      return res.status(404).json({ message: "Owner doesn't exist!" });
+    }
+
+    // Generate the profile photo URL
+    const profilePhotoUrl = `${req.protocol}://${req.get("host")}/uploads/${
+      owner.picture
+    }`;
+    res.status(200).json({
+      name: owner.name,
+      email: owner.email,
+      profilePhoto: profilePhotoUrl,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { Login, Registration, ViewProfile };

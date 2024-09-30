@@ -12,6 +12,7 @@ async function verifyOwner(req, res, next) {
       return res.status(401).json({ message });
     }
     req.user = { _id: decoded._id, role: decoded.role };
+    console.log(req.user);
     if (req.user && req.user.role === "owner") {
       next();
     } else {

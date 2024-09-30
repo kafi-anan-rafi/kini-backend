@@ -13,6 +13,7 @@ const orderRouter = require("./routes/orderRoute");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use("uploads", express.static(path.join(__dirname, "uploads")));
 app.use(cookieParser());
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -25,7 +26,7 @@ app.use("/api/orders", orderRouter);
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "Welcome to Baag!" });
+  res.status(200).send({ message: "Welcome to Baag!" });
 });
 
 app.all("/*", (req, res, next) => {
