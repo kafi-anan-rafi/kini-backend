@@ -10,6 +10,6 @@ const { verifyOwner } = require("../middlewares/authMiddleware");
 
 router.post("/login", Login);
 router.post("/register", upload.single("picture"), Registration);
-router.get("/profile", ViewProfile);
+router.get("/profile", verifyOwner, ViewProfile);
 
 module.exports = router;

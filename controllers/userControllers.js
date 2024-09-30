@@ -5,14 +5,14 @@ const {
   generateToken,
 } = require("../utils/authUlits");
 const {
-  userLoginSchema,
-  userRegistrationSchema,
+  loginSchema,
+  registrationSchema,
 } = require("../validations/userSchema");
 
-async function UserLogin(req, res, next) {
+async function Login(req, res, next) {
   try {
     const { email, password } = req.body;
-    const { error, value } = userLoginSchema.validate(
+    const { error, value } = loginSchema.validate(
       { email, password },
       { abortEarly: false }
     );
@@ -56,11 +56,11 @@ async function UserLogin(req, res, next) {
   }
 }
 
-async function UserRegistration(req, res, next) {
+async function Registration(req, res, next) {
   try {
     const { filename: picture } = req.file;
     const { name, email, password } = req.body;
-    const { error, value } = userRegistrationSchema.validate(
+    const { error, value } = registrationSchema.validate(
       { name, email, password, picture },
       {
         abortEarly: false,
@@ -94,4 +94,4 @@ async function UserRegistration(req, res, next) {
   }
 }
 
-module.exports = { UserLogin, UserRegistration };
+module.exports = { Login, Registration };

@@ -1,5 +1,3 @@
-const fs = require("fs");
-const path = require("path");
 const ownerModel = require("../models/ownerModel");
 const {
   hashPassword,
@@ -7,13 +5,13 @@ const {
   comparePassword,
 } = require("../utils/authUlits");
 const {
-  ownerRegistrationSchema,
-  ownerLoginSchema,
+  registrationSchema,
+  loginSchema,
 } = require("../validations/ownerSchema");
 
 async function Login(req, res, next) {
   try {
-    const { error, value } = ownerLoginSchema.validate(req.body, {
+    const { error, value } = loginSchema.validate(req.body, {
       abortEarly: false,
     });
     if (error) {
@@ -62,7 +60,7 @@ async function Registration(req, res, next) {
   try {
     const { filename: picture } = req.file;
     const { name, email, password, address } = req.body;
-    const { error, value } = ownerRegistrationSchema.validate(
+    const { error, value } = registrationSchema.validate(
       { name, email, password, address, picture },
       {
         abortEarly: false,
