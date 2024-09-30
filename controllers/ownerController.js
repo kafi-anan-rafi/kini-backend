@@ -35,7 +35,7 @@ async function OwnerLogin(req, res, next) {
     }
 
     // compare hashed password with the database password
-    const { status, isMatch, comparisonError } = comparePassword(
+    const { status, isMatch, comparisonError } = await comparePassword(
       value.password,
       hashedPassword
     );
@@ -51,14 +51,14 @@ async function OwnerLogin(req, res, next) {
       return res.status(401).json({ message });
     }
 
-    res.status(200).send({ message: "Login Successful", token });
+    res.status(200).json({ message: "Login Successful", token });
   } catch (error) {
     next(error);
   }
 }
 
 // Registration
-async function OwnerRegister(req, res, next) {
+async function OwnerRegistration(req, res, next) {
   try {
     const { filename: picture } = req.file;
     const { name, email, password, address } = req.body;
@@ -96,4 +96,4 @@ async function OwnerRegister(req, res, next) {
   }
 }
 
-module.exports = { OwnerLogin, OwnerRegister };
+module.exports = { OwnerLogin, OwnerRegistration };
