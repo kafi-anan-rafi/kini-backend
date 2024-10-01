@@ -13,7 +13,7 @@ const orderItemsSchema = new Schema({
   },
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
-  itemTotalAmount: { type: Number, select: false },
+  itemTotalAmount: { type: Number, required: true },
 });
 
 const orderSchema = new Schema(
@@ -29,7 +29,7 @@ const orderSchema = new Schema(
       enum: paymentStatus,
       default: paymentStatus[0],
     },
-    totalOrderAmount: { type: Number, select: false },
+    totalOrderAmount: { type: Number, required: true },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
@@ -39,25 +39,25 @@ const orderSchema = new Schema(
   { timestamps: true }
 );
 
-orderSchema.pre("save", function (next) {
-  try {
-    // Automatically calculate itemTotalAmount
-    this.orderItems.forEach((item) => {
-      item.itemTotalAmount = item.price * item.quantity;
-    });
+// orderSchema.pre("save", function (next) {
+//   try {
+//     // Automatically calculate itemTotalAmount
+//     this.orderItems.forEach((item) => {
+//       item.itemTotalAmount = item.price * item.quantity;
+//     });
 
-    const total = this.orderItems.reduce(
-      (acc, item) => acc + item.itemTotalAmount,
-      0
-    );
+//     const total = this.orderItems.reduce(
+//       (acc, item) => acc + item.itemTotalAmount,
+//       0
+//     );
 
-    // Calculate total order amount
-    this.totalOrderAmount = total - this.discount;
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
+//     // Calculate total order amount
+//     this.totalOrderAmount = total - this.discount;
+//     next();
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 const orderModel = model("order", orderSchema);
 
